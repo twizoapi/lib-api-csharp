@@ -1,0 +1,1632 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TwizoAPI</name>
+    </assembly>
+    <members>
+        <member name="T:TwizoAPI.AbstractClient">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Abstract client class to connect to the API server.
+            </summary>
+        </member>
+        <member name="F:TwizoAPI.AbstractClient.API_USERNAME">
+            <summary>The API username to be used.</summary>
+        </member>
+        <member name="F:TwizoAPI.AbstractClient.API_VERSION">
+            <summary>The API version to be used.</summary>
+        </member>
+        <member name="F:TwizoAPI.AbstractClient.apiKey">
+            <summary>The provided Twizo API key.</summary>
+        </member>
+        <member name="F:TwizoAPI.AbstractClient.apiHost">
+            <summary>The provided Twizo host.</summary>
+        </member>
+        <member name="M:TwizoAPI.AbstractClient.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.AbstractClient"/> class.
+            </summary>
+            <param name="apiKey">Your Twizo API key.</param>
+            <param name="apiHost">The Twizo host of your choice.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided apiKey or apiHost are null.</exception>
+        </member>
+        <member name="M:TwizoAPI.AbstractClient.GetUrl(System.String)">
+            <summary>
+            Get the full URL for a given location.
+            </summary>
+            <param name="location">The API location to be used.</param>
+            <returns>Full URL to Twizo server.</returns>
+        </member>
+        <member name="M:TwizoAPI.AbstractClient.GenerateResponse(System.Int32,System.String)">
+            <summary>
+            Deserialize the server response json and creates a <see cref="T:TwizoAPI.Responses.Response"/> object with its data.
+            </summary>
+            <param name="statusCode">The http status code returned by the server.</param>
+            <param name="json">The json returned by the server.</param>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server reponse.</returns>
+            <exception cref="T:TwizoAPI.Client.ClientException">Thrown when an invalid json was received from the server.</exception>
+            <exception cref="T:TwizoAPI.Client.ClientException">Thrown when the server returns a non-success http status code.</exception>
+        </member>
+        <member name="M:TwizoAPI.AbstractClient.ValidateServerResponse(TwizoAPI.Responses.Response)">
+            <summary>
+            Validate the response from the server and throws appropriate exception if the call was not successful.
+            </summary>
+            <param name="response"><see cref="T:TwizoAPI.Responses.Response"/> object created from the server response.</param>
+            <exception cref="T:TwizoAPI.Client.ClientException">Thrown when the server returns a non-success http status code.</exception>
+        </member>
+        <member name="M:TwizoAPI.AbstractClient.SendRequest(System.String,System.String,System.Object)">
+            <summary>
+            Send a request to the Twizo server and return its response.
+            </summary>
+            <param name="location">The API location to which to request should be sent.</param>
+            <param name="verb">The http verb to be used.</param>
+            <param name="parameters">The parameters to be sent with the request (optional).</param>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Client.ClientException">Thrown when an invalid json was received from the server.</exception>
+            <exception cref="T:TwizoAPI.Client.ClientException">Thrown when the server returns a non-success http status code.</exception>
+            <exception cref="T:Newtonsoft.Json.JsonSerializationException">Thrown when the parameters could not be serialized.</exception>
+        </member>
+        <member name="T:TwizoAPI.ResultType">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Result types for sms and numberlookup.
+            </summary>
+        </member>
+        <member name="T:TwizoAPI.AbstractEntity">
+            <summary>
+            Abstract parent class of all entity objects.
+            </summary>
+        </member>
+        <member name="F:TwizoAPI.AbstractEntity.ACTION_RETRIEVE">
+            <summary>Http verb GET, used to retrieve server data.</summary>
+        </member>
+        <member name="F:TwizoAPI.AbstractEntity.ACTION_SUBMIT">
+            <summary>Http verb POST, used to submit server data.</summary>
+        </member>
+        <member name="F:TwizoAPI.AbstractEntity.ACTION_REMOVE">
+            <summary>Http verb DELETE, used to remove server data.</summary>
+        </member>
+        <member name="F:TwizoAPI.AbstractEntity.ACTION_UPDATE">
+            <summary>Http verb PUT, used to update server data.</summary>
+        </member>
+        <member name="F:TwizoAPI.AbstractEntity.client">
+            <summary><see cref="T:TwizoAPI.AbstractClient"/> object, used to send and receive data.</summary>
+        </member>
+        <member name="F:TwizoAPI.AbstractEntity.parameters">
+            <summary>The parameters to be sent to the server.</summary>
+        </member>
+        <member name="M:TwizoAPI.AbstractEntity.#ctor(TwizoAPI.AbstractClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.AbstractEntity"/> clas.
+            </summary>
+            <param name="client"><see cref="T:TwizoAPI.AbstractClient"/> object, used to send and receive data.</param>
+        </member>
+        <member name="M:TwizoAPI.AbstractEntity.GetCreateUrl">
+            <summary>Get the location to which the server call should be made.</summary>
+        </member>
+        <member name="M:TwizoAPI.AbstractEntity.AddParameter(System.String,System.Object)">
+            <summary>
+            Add a parameter to be sent to the server.
+            </summary>
+            <param name="key">The property name.</param>
+            <param name="value">The property value.</param>
+        </member>
+        <member name="M:TwizoAPI.AbstractEntity.DetectInvalidJsonFields">
+            <summary>
+            Detect invalid json fields in the entity and throws an exception when found.
+            </summary>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of this entity could not be serialized.</exception>
+        </member>
+        <member name="M:TwizoAPI.AbstractEntity.SendApiCall(System.String,System.String)">
+            <summary>
+            Send an API call to the <see cref="T:TwizoAPI.AbstractClient"/>.
+            </summary>
+            <param name="verb">The http verb to be used with the API call.</param>
+            <param name="location">The URL to which the API call should be made.</param>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of this entity could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.AbstractEntity.FillObject(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Fill the entity properties using the API response.
+            </summary>
+            <param name="fields">Deserialized API response.</param>
+        </member>
+        <member name="M:TwizoAPI.AbstractEntity.GetItems(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Find the embedded items from an API response.
+            </summary>
+            <param name="fields">Deserialized API response.</param>
+            <returns>If found, returns embedded items. Otherwise, returns <paramref name="fields"/></returns>
+        </member>
+        <member name="M:TwizoAPI.AbstractEntity.Populate(System.String)">
+            <summary>
+            Get the entity status for the supplied message id.
+            </summary>
+            <param name="messageId">The message id of the entity.</param>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when no message id was supplied.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.AbstractEntity.PropertyExists(System.String)">
+            <summary>
+            Check if this entity contains a property with the given name.
+            </summary>
+            <param name="propertyName">The name of the entity.</param>
+            <returns><c>true</c> if the property exists, otherwise <c>false</c></returns>
+        </member>
+        <member name="T:TwizoAPI.Client.ClientException">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Client exception class.
+            </summary>
+        </member>
+        <member name="P:TwizoAPI.Client.ClientException.response">
+            <summary>Gets the server response.</summary>
+        </member>
+        <member name="M:TwizoAPI.Client.ClientException.#ctor(System.String,TwizoAPI.ErrorCode,TwizoAPI.Responses.Response)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Client.ClientException"/> class.
+            </summary>
+            <param name="message">The error message.</param>
+            <param name="errorCode">The <see cref="T:TwizoAPI.ErrorCode"/>.</param>
+            <param name="response">The server response.</param>
+        </member>
+        <member name="T:TwizoAPI.Client.TwizoClient">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Twizo http client class.
+            </summary>
+        </member>
+        <member name="M:TwizoAPI.Client.TwizoClient.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Client.TwizoClient"/> class.
+            </summary>
+            <param name="apiKey">Your Twizo API key.</param>
+            <param name="apiHost">The Twizo host of your choice.</param>
+        </member>
+        <member name="M:TwizoAPI.Client.TwizoClient.SendRequest(System.String,System.String,System.Object)">
+            <summary>
+            Send a request to the Twizo server and return its response.
+            </summary>
+            <param name="location">The API location to which to request should be sent.</param>
+            <param name="verb">The http verb to be used.</param>
+            <param name="parameters">The parameters to be sent with the request (optional).</param>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Client.ClientException">Thrown when an invalid json was received from the server.</exception>
+            <exception cref="T:TwizoAPI.Client.ClientException">Thrown when the server returns a non-success http status code.</exception>
+            <exception cref="T:Newtonsoft.Json.JsonSerializationException">Thrown when the parameters could not be serialized.</exception>
+        </member>
+        <member name="M:TwizoAPI.Client.TwizoClient.Send(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Send the <see cref="T:System.Net.Http.HttpRequestMessage"/> and process the server response.
+            </summary>
+            <param name="request">The <see cref="T:System.Net.Http.HttpRequestMessage"/> to be sent.</param>
+            <returns>The server response.</returns>
+            <exception cref="T:TwizoAPI.Client.ClientException">Thrown when an invalid json was received from the server.</exception>
+            <exception cref="T:TwizoAPI.Client.ClientException">Thrown when the server returns a non-success http status code.</exception>
+        </member>
+        <member name="T:TwizoAPI.Entity.BackupCode">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Create, retrieve, update, delete or verify backup codes for an identifier.
+            </summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.BackupCode.amountOfCodesLeft">
+            <summary>Gets the amount of backup codes left.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.BackupCode.codes">
+            <summary>Gets the array with the back codes.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.BackupCode.createdDateTime">
+            <summary>Gets the datetime the backup codes were created. Datetime is in ISO-8601 format.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.BackupCode.identifier">
+            <summary>Gets or sets the identifier of the backupCode.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCode.#ctor(TwizoAPI.AbstractClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.BackupCode"/> class.
+            </summary>
+            <param name="client"><see cref="T:TwizoAPI.AbstractClient"/> object, used to send and receive data.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCode.GetCreateUrl">
+            <summary>Get the location to which the server call should be made.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCode.Create">
+            <summary>
+            Create backup codes for the <see cref="P:TwizoAPI.Entity.BackupCode.identifier"/> and return the server response.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of this entity could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCode.Update">
+            <summary>
+            Create new backup codes for the <see cref="P:TwizoAPI.Entity.BackupCode.identifier"/> and return the server response.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of this entity could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCode.Delete">
+            <summary>
+            Delete all backup codes for the <see cref="P:TwizoAPI.Entity.BackupCode.identifier"/>.
+            </summary>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCode.Populate(System.String)">
+            <summary>
+            Retrieve remaining backup codes for the <see cref="P:TwizoAPI.Entity.BackupCode.identifier"/>.
+            </summary>
+            <param name="identifier">The identifier.</param>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the supplied identifier is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCode.Verify(System.String,System.String)">
+            <summary>
+            Verify the supplied token.
+            </summary>
+            <param name="token">The token to be verified.</param>
+            <param name="identifier">The identifier (optional).</param>
+            <exception cref="T:TwizoAPI.Entity.BackupCodeExceptions.EmptyTokenException">Thrown when the supplied token is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.BackupCodeExceptions.EmptyIdentifierException">Thrown when the identifier is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+            <exception cref="T:TwizoAPI.Entity.BackupCodeExceptions.BackupCodeException">Thrown when the returned error code is a backupcode error.</exception>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCode.SendApiCall(System.String,System.String)">
+            <summary>
+            Send an API call to the <see cref="T:TwizoAPI.AbstractClient"/>.
+            </summary>
+            <param name="verb">The http verb to be used with the API call.</param>
+            <param name="location">The URL to which the API call should be made.</param>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of this entity could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+            <exception cref="T:TwizoAPI.Entity.BackupCodeExceptions.BackupCodeException">Thrown when the returned error code is a backupcode error.</exception>
+        </member>
+        <member name="T:TwizoAPI.Entity.BackupCodeExceptions.BackupCodeException">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Backup code exception class.
+            </summary>
+        </member>
+        <member name="T:TwizoAPI.Entity.BackupCodeExceptions.BackupCodeException.BackupCodeError">
+            <summary>
+            Backup code error codes.
+            </summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCodeExceptions.BackupCodeException.#ctor(TwizoAPI.Entity.EntityException)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.BackupCodeExceptions.BackupCodeException"/> class.
+            </summary>
+            <param name="e">Underlying <see cref="T:TwizoAPI.Entity.EntityException"/>.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCodeExceptions.BackupCodeException.GetMessage(TwizoAPI.Entity.EntityException)">
+            <summary>
+            Get the error message based on the error code.
+            </summary>
+            <param name="e">Underlying <see cref="T:TwizoAPI.Entity.EntityException"/></param>
+            <returns>Error message.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCodeExceptions.BackupCodeException.GetBackupCodeJsonErrorCodes">
+            <summary>
+            Get a list of all valid json error codes for backup code failures.
+            </summary>
+            <returns>Array of json error codes.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCodeExceptions.BackupCodeException.IsBackupCodeException(TwizoAPI.Entity.EntityException)">
+            <summary>
+            Test if the <see cref="T:TwizoAPI.Entity.EntityException"/> is the result of a backup code exception.
+            </summary>
+            <param name="e">The <see cref="T:TwizoAPI.Entity.EntityException"/> to test.</param>
+            <returns><c>true</c> if the exception is a backup code exception, otherwise <c>false</c>.</returns>
+        </member>
+        <member name="T:TwizoAPI.Entity.BackupCodeExceptions.EmptyIdentifierException">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Backup code empty identifier exception class.
+            </summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCodeExceptions.EmptyIdentifierException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.BackupCodeExceptions.EmptyIdentifierException"/> class.
+            </summary>
+        </member>
+        <member name="T:TwizoAPI.Entity.BackupCodeExceptions.EmptyTokenException">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Backup code empty token exception class.
+            </summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.BackupCodeExceptions.EmptyTokenException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.BackupCodeExceptions.EmptyTokenException"/> class.
+            </summary>
+        </member>
+        <member name="T:TwizoAPI.Entity.EntityException">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Entity exception class.
+            </summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.EntityException.statusCode">
+            <summary>Gets the rest status code.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.EntityException.jsonErrorCode">
+            <summary>Gets the json error code.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.EntityException.#ctor(System.String,TwizoAPI.ErrorCode,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.EntityException"/> class.
+            </summary>
+            <param name="message">The error message.</param>
+            <param name="errorCode">The error code.</param>
+            <param name="statusCode">The rest status code.</param>
+            <param name="jsonErrorCode">The json error code.</param>
+        </member>
+        <member name="T:TwizoAPI.Entity.Factory">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            The factory class is used to create new entities.
+            </summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.#ctor(TwizoAPI.AbstractClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.Factory"/> class.
+            </summary>
+            <param name="client"><see cref="T:TwizoAPI.AbstractClient"/> object, used to send and receive data.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateEmptyVerification">
+            <summary>
+            Create an empty <see cref="T:TwizoAPI.Entity.Verification"/> object.
+            </summary>
+            <returns>Empty <see cref="T:TwizoAPI.Entity.Verification"/> object.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateVerification(System.String)">
+            <summary>
+            Create an sms <see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied recipient.
+            </summary>
+            <param name="recipient">The number that should receive the token.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied recipient.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateVerificationCall(System.String)">
+            <summary>
+            Create a call <see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied recipient.
+            </summary>
+            <param name="recipient">The number that should receive the token.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied recipient.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateEmptyBackupCode">
+            <summary>
+            Create an empty <see cref="T:TwizoAPI.Entity.BackupCode"/> object.
+            </summary>
+            <returns>Empty <see cref="T:TwizoAPI.Entity.BackupCode"/> object.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateBackupCode(System.String)">
+            <summary>
+            Create backup codes for the supplied identifier.
+            </summary>
+            <param name="identifier">The identifier.</param>
+            <returns><see cref="T:TwizoAPI.Entity.BackupCode"/> object with the supplied identifier.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateEmptySms">
+            <summary>
+            Create an empty <see cref="T:TwizoAPI.Entity.Sms"/> object.
+            </summary>
+            <returns>Empty <see cref="T:TwizoAPI.Entity.Sms"/> object.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateSms(System.String,System.String,System.String)">
+            <summary>
+            Create an sms with the supplied body, recipient and sender.
+            </summary>
+            <param name="body">The body of the sms.</param>
+            <param name="recipient">The recipient of the sms.</param>
+            <param name="sender">The sender of the sms.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Sms"/> object with the supplied parameters.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateSms(System.String[],System.String,System.String)">
+            <summary>
+            Create an sms with the supplied body, recipients and sender.
+            </summary>
+            <param name="body">The body of the sms.</param>
+            <param name="recipients">Array with the recipients of the sms.</param>
+            <param name="sender">The sender of the sms.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Sms"/> object with the supplied parameters.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateSmsPoll">
+            <summary>
+            Create a new <see cref="T:TwizoAPI.Entity.Poll"/> object with type <see cref="F:TwizoAPI.Entity.Poll.TYPE_SMS"/>.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Entity.Poll"/> object.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateEmptyNumberLookup">
+            <summary>
+            Create an empty <see cref="T:TwizoAPI.Entity.NumberLookup"/> object.
+            </summary>
+            <returns>Empty <see cref="T:TwizoAPI.Entity.NumberLookup"/> object.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateNumberLookup(System.String)">
+            <summary>
+            Create a number lookup for the supplied number.
+            </summary>
+            <param name="number">The number to be lookup up.</param>
+            <returns><see cref="T:TwizoAPI.Entity.NumberLookup"/> object with the supplied numbers.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateNumberLookup(System.String[])">
+            <summary>
+            Create a number lookup for the supplied numbers.
+            </summary>
+            <param name="numbers">Array with the numbers to be lookup up.</param>
+            <returns><see cref="T:TwizoAPI.Entity.NumberLookup"/> object with the supplied numbers.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateNumberLookupPoll">
+            <summary>
+            Create a new <see cref="T:TwizoAPI.Entity.Poll"/> object with type <see cref="F:TwizoAPI.Entity.Poll.TYPE_NUMBER_LOOKUP"/>.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Entity.Poll"/> object.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateEmptyWidgetSession">
+            <summary>
+            Create an empty <see cref="T:TwizoAPI.Entity.WidgetSession"/> object.
+            </summary>
+            <returns>Empty <see cref="T:TwizoAPI.Entity.WidgetSession"/> object.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateWidgetSession(System.String[],System.String,System.String)">
+            <summary>
+            Create a widget session with the supplied allowed types, recipient and backup code identifier.
+            </summary>
+            <param name="allowedTypes">Array with the allowed types.</param>
+            <param name="recipient">The recipient (optional).</param>
+            <param name="backupCodeIdentifier">The backup code identifier (optional).</param>
+            <returns><see cref="T:TwizoAPI.Entity.WidgetSession"/> object with the supplied parameters.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Factory.CreateBalance">
+            <summary>
+            Create a balance object and retrieve its data.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Entity.Balance"/> object including balance data.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when loading the balance data has failed.</exception>
+        </member>
+        <member name="T:TwizoAPI.Entity.ValidationExceptions.ErrorField">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Define an error field for use in validation exceptions.
+            </summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.ValidationExceptions.ErrorField.arrayIndex">
+            <summary>Gets the array index of this ErrorField.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.ValidationExceptions.ErrorField.message">
+            <summary>Gets the message of this ErrorField.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.ValidationExceptions.ErrorField.name">
+            <summary>Gets the name of this ErrorField.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.ValidationExceptions.ErrorField.type">
+            <summary>Gets the type of this ErrorField.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.ValidationExceptions.ErrorField.value">
+            <summary>Gets the value of this ErrorField.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.ValidationExceptions.ErrorField.#ctor(System.String,System.String,System.String,System.String,System.Nullable{System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.ValidationExceptions.ErrorField"/> class.
+            </summary>
+            <param name="name">Name of the ErrorField.</param>
+            <param name="value">Value of the ErrorField.</param>
+            <param name="type">Type of the ErrorField.</param>
+            <param name="message">Message of the ErrorField.</param>
+            <param name="arrayIndex">Array index of the ErrorField.</param>
+        </member>
+        <member name="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Entity validation exception class.
+            </summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.ValidationExceptions.ValidationException.errorFields">
+            <summary>Gets a list of the <see cref="T:TwizoAPI.Entity.ValidationExceptions.ErrorField"/> objects in this validation exception.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.ValidationExceptions.ValidationException.#ctor(System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException"/> class.
+            </summary>
+            <param name="validationFields">The validation messages returned by the server.</param>
+            <param name="parameters">The parameters sent to the server.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.ValidationExceptions.ValidationException.GetExceptionMessages(System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Parse all validation messages from the API and combine them in a string message.
+            </summary>
+            <param name="validationFields">The validation messages returned by the server.</param>
+            <param name="parameters">The parameters sent to the server.</param>
+            <returns>Validation error message.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.ValidationExceptions.ValidationException.CreateErrorFields(System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Parse all validation messages from the API and create a list of <see cref="T:TwizoAPI.Entity.ValidationExceptions.ErrorField"/> objects.
+            </summary>
+            <param name="validationFields">The validation messages returned by the server.</param>
+            <param name="parameters">The parameters sent to the server.</param>
+            <returns>List of <see cref="T:TwizoAPI.Entity.ValidationExceptions.ErrorField"/> objects representing the validation errors received.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.ValidationExceptions.ValidationException.AddErrorField(System.Collections.Generic.List{TwizoAPI.Entity.ValidationExceptions.ErrorField},System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Nullable{System.Int32})">
+            <summary>
+            Add an <see cref="T:TwizoAPI.Entity.ValidationExceptions.ErrorField"/> to the list of ErrorFields.
+            </summary>
+            <param name="errors">Current list of ErrorFields.</param>
+            <param name="name">Name of ErrorField.</param>
+            <param name="value">Value of ErrorField.</param>
+            <param name="message">Message of ErrorField.</param>
+            <param name="arrayIndex">Array index of ErrorField.</param>
+            <returns>List of <see cref="T:TwizoAPI.Entity.ValidationExceptions.ErrorField"/> objects, including the new ErrorField.</returns>
+        </member>
+        <member name="T:TwizoAPI.Entity.VerificationExceptions.EmptyMessageIdException">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Verification empty message id exception class.
+            </summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.VerificationExceptions.EmptyMessageIdException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.VerificationExceptions.EmptyMessageIdException"/> class.
+            </summary>
+        </member>
+        <member name="T:TwizoAPI.Entity.VerificationExceptions.EmptyTokenException">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Verification empty token exception class.
+            </summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.VerificationExceptions.EmptyTokenException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.VerificationExceptions.EmptyTokenException"/> class.
+            </summary>
+        </member>
+        <member name="T:TwizoAPI.Entity.VerificationExceptions.VerificationException">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Verification exception class.
+            </summary>
+        </member>
+        <member name="T:TwizoAPI.Entity.VerificationExceptions.VerificationException.VerificationError">
+            <summary>
+            Verification error codes.
+            </summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.VerificationExceptions.VerificationException.#ctor(TwizoAPI.Entity.EntityException)">
+            <summary>
+            Initalizes a new instance of the <see cref="T:TwizoAPI.Entity.VerificationExceptions.VerificationException"/> class.
+            </summary>
+            <param name="e">Underlying <see cref="T:TwizoAPI.Entity.EntityException"/>.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.VerificationExceptions.VerificationException.GetMessage(TwizoAPI.Entity.EntityException)">
+            <summary>
+            Get the error message based on the error code.
+            </summary>
+            <param name="e">Underlying <see cref="T:TwizoAPI.Entity.EntityException"/></param>
+            <returns>Error message.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.VerificationExceptions.VerificationException.GetVerificationJsonErrorCodes">
+            <summary>
+            Get a list of all valid json error codes for verification failures.
+            </summary>
+            <returns>Array of json error codes.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.VerificationExceptions.VerificationException.IsVerificationException(TwizoAPI.Entity.EntityException)">
+            <summary>
+            Test if the <see cref="T:TwizoAPI.Entity.EntityException"/> is the result of a verification exception.
+            </summary>
+            <param name="e">The <see cref="T:TwizoAPI.Entity.EntityException"/> to test.</param>
+            <returns><c>true</c> if the exception is a verification exception, otherwise <c>false</c>.</returns>
+        </member>
+        <member name="T:TwizoAPI.Entity.Balance">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Retrieve information about your balance.
+            </summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Balance.credit">
+            <summary>Gets the curent balance of the wallet.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Balance.currencyCode">
+            <summary>Gets the currency type of the wallet.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Balance.freeVerification">
+            <summary>Gets the amount of free verifications left for this month.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Balance.wallet">
+            <summary>Gets the name of the wallet.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.Balance.#ctor(TwizoAPI.AbstractClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.Balance"/> class.
+            </summary>
+            <param name="client"><see cref="T:TwizoAPI.AbstractClient"/> object, used to send and receive data.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.Balance.GetCreateUrl">
+            <summary>Get the location to which the server call should be made.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.Balance.LoadData">
+            <summary>
+            Load the balance data from the server.
+            </summary>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="T:TwizoAPI.Entity.WidgetSession">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Widget session class.
+            </summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.WidgetSession.TYPE_CALL">
+            <summary>Widget session type for call.</summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.WidgetSession.TYPE_SMS">
+            <summary>Wdiget session type for sms.</summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.WidgetSession.TYPE_BACKUP_CODE">
+            <summary>Wdiget session type for backup code.</summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.WidgetSession.TOKEN_TYPE_NUMERIC">
+            <summary>Numberic token type.</summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.WidgetSession.TOKEN_TYPE_ALPHANUMERIC">
+            <summary>Alphanumeric token type.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.applicationTag">
+            <summary>Gets the application used for sending the verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.backupCodeIdentifier">
+            <summary>Gets or sets the backup code identifier.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.createdDateTime">
+            <summary>Gets the datetime the verification was received by the API. Datetime is in ISO-8601 format.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.language">
+            <summary>Gets the language for this session.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.sessionToken">
+            <summary>Gets the session token, a unique id identifying this widget verification session.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.status">
+            <summary>Gets the session status.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.statusCode">
+            <summary>Gets the status code.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.allowedTypes">
+            <summary>Gets or sets the allowed types. Valid types are <see cref="F:TwizoAPI.Entity.WidgetSession.TYPE_CALL"/>, <see cref="F:TwizoAPI.Entity.WidgetSession.TYPE_SMS"/> and <see cref="F:TwizoAPI.Entity.WidgetSession.TYPE_BACKUP_CODE"/>.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.bodyTemplate">
+            <summary>Gets or sets the body template in case the verification is sent by sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.dcs">
+            <summary>Gets or sets the dcs, used to specify the character set of the body template.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.recipient">
+            <summary>Gets or sets the recipient. Single phone number in international format.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.sender">
+            <summary>Gets or sets the sender of the verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.senderNpi">
+            <summary>Gets or sets the senderNpi.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.senderTon">
+            <summary>Gets or sets the senderTon.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.tag">
+            <summary>Gets or sets the tag for this session. Free text parameter you can use for your own reference.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.tokenLength">
+            <summary>Gets or sets the token length.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.tokenType">
+            <summary>Gets or sets the token type. Valid types are <see cref="F:TwizoAPI.Entity.WidgetSession.TOKEN_TYPE_NUMERIC"/> and <see cref="F:TwizoAPI.Entity.WidgetSession.TOKEN_TYPE_ALPHANUMERIC"/>.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.WidgetSession.validity">
+            <summary>Gets or sets the tag for this session. Free text parameter you can use for your own reference.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.WidgetSession.#ctor(TwizoAPI.AbstractClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.WidgetSession"/> class.
+            </summary>
+            <param name="client"><see cref="T:TwizoAPI.AbstractClient"/> object, used to send and receive data.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.WidgetSession.GetCreateUrl">
+            <summary>Get the location to which the server call should be made.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.WidgetSession.Create">
+            <summary>
+            Create a new widget session and return the server response.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of the widget session could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Entity.WidgetSession.Populate(System.String,System.String,System.String)">
+            <summary>
+            Get the status for widget with the supplied parameters.
+            </summary>
+            <param name="sessionToken">The session token of the widget session.</param>
+            <param name="recipient">The recipient of the widget session (optional).</param>
+            <param name="backupCodeIdentifier">The backup code identifier (optional).</param>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the session token is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the recipient and backup code identifier are empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of this entity could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="T:TwizoAPI.Entity.NumberLookup">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Perform a lookup on one or more numbers.
+            </summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.applicationTag">
+            <summary>Gets the application used for sending the verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.countryCode">
+            <summary>Gets the country code. A two-digit code of the country of the operator the number is subscribed to.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.createdDateTime">
+            <summary>Gets the datetime the numberlookup was received by the API. Datetime is in ISO-8601 format.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.imsi">
+            <summary>Gets the imsi (International Mobile Subscriber Identity) of the SIM card the number is linked to.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.isPorted">
+            <summary>Gets information on whether the number is ported to another operator than the operator who issued the number.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.isRoaming">
+            <summary>Gets information on whether the number is currently roaming.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.messageId">
+            <summary>Gets the message id, a unique id identifying this numberlookup.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.msc">
+            <summary>Gets the msc (Mobile Switching Center) of the operator the number is currently registered to.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.networkCode">
+            <summary>Gets the network code of the operator the number is subscribed to.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.Operator">
+            <summary>Gets the name of the operator the number is subscribed to.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.reasonCode">
+            <summary>Gets the reason code if the numberlookup was rejected or could not be performed.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.resultTimestamp">
+            <summary>Gets the timestamp when the numberlookup was performed.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.salesPrice">
+            <summary>Gets the sales price for this numberlookup.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.salesPriceCurrencyCode">
+            <summary>Gets the currency for the sale of this numberlookup.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.status">
+            <summary>Gets the status of this numberlookup.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.statusCode">
+            <summary>Gets the status code of this numberlookup.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.validUntilDateTime">
+            <summary>Gets the datetime until which this numberlookup is valid.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.callbackUrl">
+            <summary>Gets or sets the callback url. If set, status updates will be submitted to this url</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.numbers">
+            <summary>Gets or sets the array of numbers to be lookup up. Minimum of 1, maximum of 1000 numers.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.resultType">
+            <summary>Gets or sets the <see cref="T:TwizoAPI.ResultType"/> of the numberlookup.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.tag">
+            <summary>Gets or sets the tag for this numberlookup. Free text parameter you can use for your own reference.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.NumberLookup.validity">
+            <summary>Gets or sets the validity of the numberlookup in seconds.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.NumberLookup.#ctor(TwizoAPI.AbstractClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.NumberLookup"/> class.
+            </summary>
+            <param name="client"><see cref="T:TwizoAPI.AbstractClient"/> object, used to send and receive data.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.NumberLookup.GetCreateUrl">
+            <summary>Get the location to which the server call should be made.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.NumberLookup.Send">
+            <summary>
+            Send a new numberlookup with the supplied parameters and return the server response.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of the numberlookup could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="T:TwizoAPI.Entity.Poll">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Poll the results of all sms messages or number lookups of the past 24 hour, with a maximum of 10 reports.
+            </summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.Poll.TYPE_SMS">
+            <summary>Poll type for sms</summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.Poll.TYPE_NUMBER_LOOKUP">
+            <summary>Poll type for number lookup</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Poll.batchId">
+            <summary>Gets the batch id of the poll.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.Poll.#ctor(TwizoAPI.AbstractClient,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.Poll"/> class.
+            </summary>
+            <param name="client"><see cref="T:TwizoAPI.AbstractClient"/> object, used to send and receive data.</param>
+            <param name="type">The poll type, either <see cref="F:TwizoAPI.Entity.Poll.TYPE_SMS"/> or <see cref="F:TwizoAPI.Entity.Poll.TYPE_NUMBER_LOOKUP"/>.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.Poll.GetCreateUrl">
+            <summary>Get the location to which the server call should be made.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.Poll.Send">
+            <summary>
+            Create a poll entity on the server.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Entity.Poll.GetMessages">
+            <summary>
+            Get a list of the poll messages.
+            </summary>
+            <returns>The poll messages.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Poll.Delete">
+            <summary>
+            Delete this poll from the server if the batch id is not <c>null</c>.
+            </summary>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Entity.Poll.FillObject(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Fill the entity properties using the API response.
+            </summary>
+            <param name="fields">Deserialized API response.</param>
+        </member>
+        <member name="T:TwizoAPI.Entity.Sms">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Send an sms to one or more recipients.
+            </summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.applicationTag">
+            <summary>Gets the application used for sending the sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.createdDateTime">
+            <summary>Gets the datetime the sms was received by the API. Datetime is in ISO-8601 format.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.messageId">
+            <summary>Gets the message id, a unique id identifying this sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.networkCode">
+            <summary>Gets the network code of the operator the number is subscribed to.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.reasonCode">
+            <summary>Gets the reason code if the sms was rejected or could not be sent.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.resultTimestamp">
+            <summary>Gets the timestamp when the sms was performed.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.salesPrice">
+            <summary>Gets the sales price for this sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.salesPriceCurrencyCode">
+            <summary>Gets the currency for the sale of this sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.status">
+            <summary>Gets the status of this sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.statusCode">
+            <summary>Gets the status code of this sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.type">
+            <summary>Gets the type of this sms. Either <see cref="F:TwizoAPI.Entity.Sms.TYPE_SIMPLE"/> or <see cref="F:TwizoAPI.Entity.Sms.TYPE_ADVANCED"/>.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.validUntilDateTime">
+            <summary>Gets the datetime until which this numberlookup is valid.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.body">
+            <summary>Gets or sets the body of the sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.callbackUrl">
+            <summary>Gets or sets the callback url. If set, status updates will be submitted to this url</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.dcs">
+            <summary>Gets or sets the dcs, used to specify the character set of the body.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.pid">
+            <summary>Gets or sets the pid. Can be used to send hidden sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.recipient">
+            <summary>Gets or sets the recipient. Single phone number in international format.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.recipients">
+            <summary>Gets or sets recipients. Array of all the numbers this message was sent to.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.resultType">
+            <summary>Gets or sets the <see cref="T:TwizoAPI.ResultType"/> of the sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.scheduledDelivery">
+            <summary>Gets or sets the datetime of scheduled delivery. Datetime must be in ISO-8601 format.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.sender">
+            <summary>Gets or sets the sender of the sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.senderNpi">
+            <summary>Gets or sets the senderNpi.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.senderTon">
+            <summary>Gets or sets the senderTon.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.tag">
+            <summary>Gets or sets the tag for this sms. Free text parameter you can use for your own reference.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.udh">
+            <summary>Gets or sets the udh. Hexadecimal characters used to set concat message.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Sms.validity">
+            <summary>Gets or sets the validity of the sms in seconds.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.Sms.#ctor(TwizoAPI.AbstractClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.Sms"/> class.
+            </summary>
+            <param name="client"><see cref="T:TwizoAPI.AbstractClient"/> object, used to send and receive data.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.Sms.GetCreateUrl">
+            <summary>Get the location to which the server call should be made.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.Sms.isBinary">
+            <summary>
+            Checks whether the sms has been configured as binary message.
+            </summary>
+            <returns><c>true</c> if the sms is configured as binary message, otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:TwizoAPI.Entity.Sms.Send">
+            <summary>
+            Send a new sms with the supplied parameters and return the server response.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of the sms could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Entity.Sms.SendSimple">
+            <summary>
+            Send a new sms with the supplied parameters and return the server response. Automatically split multi part sms messages.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of the sms could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="T:TwizoAPI.Entity.VerificationStatusCode">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Verification status codes.
+            </summary>
+        </member>
+        <member name="T:TwizoAPI.Entity.Verification">
+            <summary>
+            Create a verification and verify a token.
+            </summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.Verification.TYPE_CALL">
+            <summary>Verification type for call.</summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.Verification.TYPE_SMS">
+            <summary>Verification type for sms.</summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.Verification.TOKEN_TYPE_NUMERIC">
+            <summary>Numeric token type.</summary>
+        </member>
+        <member name="F:TwizoAPI.Entity.Verification.TOKEN_TYPE_ALPHANUMERIC">
+            <summary>Alphanumeric token type.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.applicationTag">
+            <summary>Gets the application used for sending the verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.createdDateTime">
+            <summary>Gets the datetime the verification was received by the API. Datetime is in ISO-8601 format.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.language">
+            <summary>Gets the language for this verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.messageId">
+            <summary>Gets the message id, a unique id identifying this verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.reasonCode">
+            <summary>Gets the reason code if the verification was rejected.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.salesPrice">
+            <summary>Gets the sales price for this verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.salesPriceCurrencyCode">
+            <summary>Gets the currency for the sale of this verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.status">
+            <summary>Gets the status of this verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.statusCode">
+            <summary>Gets the <see cref="T:TwizoAPI.Entity.VerificationStatusCode"/> of this verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.validUntilDateTime">
+            <summary>Gets the datetime until which this verification is valid.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.bodyTemplate">
+            <summary>Gets or sets the body template in case the verification is sent by sms.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.dcs">
+            <summary>Gets or sets the dcs, used to specify the character set of the body template.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.recipient">
+            <summary>Gets or sets the recipient. Single phone number in international format.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.sender">
+            <summary>Gets or sets the sender of the verification.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.senderNpi">
+            <summary>Gets or sets the senderNpi.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.senderTon">
+            <summary>Gets or sets the senderTon.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.sessionId">
+            <summary>Gets or sets the session id, a unique id for the verification session.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.tag">
+            <summary>Gets or sets the tag for this verification. Free text parameter you can use for your own reference.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.tokenLength">
+            <summary>Gets or sets the token length.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.tokenType">
+            <summary>Gets or sets token type. Valid types are <see cref="F:TwizoAPI.Entity.Verification.TOKEN_TYPE_NUMERIC"/> and <see cref="F:TwizoAPI.Entity.Verification.TOKEN_TYPE_ALPHANUMERIC"/>.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.type">
+            <summary>Gets or sets the type. Valid types are <see cref="F:TwizoAPI.Entity.Verification.TYPE_CALL"/> and <see cref="F:TwizoAPI.Entity.Verification.TYPE_SMS"/>.</summary>
+        </member>
+        <member name="P:TwizoAPI.Entity.Verification.validity">
+            <summary>Gets or sets the validity of the token in seconds.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.Verification.#ctor(TwizoAPI.AbstractClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Entity.Verification"/> class.
+            </summary>
+            <param name="client"><see cref="T:TwizoAPI.AbstractClient"/> object, used to send and receive data.</param>
+        </member>
+        <member name="M:TwizoAPI.Entity.Verification.GetCreateUrl">
+            <summary>Get the location to which the server call should be made.</summary>
+        </member>
+        <member name="M:TwizoAPI.Entity.Verification.Send">
+            <summary>
+            Send a new verification token to the recipient and return the server response.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Responses.Response"/> object with the server response.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of the verification could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Entity.Verification.Verify(System.String,System.String)">
+            <summary>
+            Verify the supplied token with 
+            </summary>
+            <param name="token">The token to be verified.</param>
+            <param name="messageId">The message id of the verification (optional).</param>
+            <exception cref="T:TwizoAPI.Entity.VerificationExceptions.EmptyTokenException">Thrown when the supplied token is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.VerificationExceptions.EmptyMessageIdException">Thrown when the message id is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+            <exception cref="T:TwizoAPI.Entity.VerificationExceptions.VerificationException">Thrown when the returned error code is a verification error.</exception>
+        </member>
+        <member name="T:TwizoAPI.ErrorCode">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Twizo error codes.
+            </summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.SERVER_UNAVAILABLE">
+            <summary>The server is unavailable.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.INVALID_RESPONSE">
+            <summary>An invalid or unknown response was received from the server.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.VALIDATION_ERRORS">
+            <summary>One or more errors occured while validating the supplied data.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.VERIFICATION_FAILED">
+            <summary>The verification failed.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.NO_CLIENT_FOUND">
+            <summary>No client was found.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.INVALID_FIELDS">
+            <summary>One or more of the parameters supplied are invalid.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.NO_MESSAGE_ID_SUPPLIED">
+            <summary>No message id was supplied.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.INVALID_APPLICATION_SECRET">
+            <summary>The supplied api key is invalid.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.UNDEFINED_FIELD_ACCESSED">
+            <summary>An undefined field was requested.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.SERVICE_UNAVAILABLE">
+            <summary>The requested service is unavailable.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.ENTITY_NOT_FOUND">
+            <summary>The requested entity was not found.</summary>
+        </member>
+        <member name="F:TwizoAPI.ErrorCode.BACKUP_CODE_FAILED">
+            <summary>The supplied backup code is invalid.</summary>
+        </member>
+        <member name="T:TwizoAPI.TwizoException">
+            <summary>
+            General Twizo exception class.
+            </summary>
+        </member>
+        <member name="P:TwizoAPI.TwizoException.errorCode">
+            <summary>Gets the <see cref="T:TwizoAPI.ErrorCode"/> of this exception.</summary>
+        </member>
+        <member name="M:TwizoAPI.TwizoException.#ctor(System.String,TwizoAPI.ErrorCode)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.TwizoException"/> class.
+            </summary>
+            <param name="message">The error message.</param>
+            <param name="errorCode">The <see cref="T:TwizoAPI.ErrorCode"/>.</param>
+        </member>
+        <member name="T:TwizoAPI.ITwizo">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Interface for Twizo.
+            </summary>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.CreateVerification(System.String)">
+            <summary>
+            Create a verification for the supplied recipient.
+            </summary>
+            <param name="recipient">The number that should receive the token.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied recipient.</returns>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.GetVerification(System.String)">
+            <summary>
+            Get the verification status for the supplied message id.
+            </summary>
+            <param name="messageId">The message id of the verification.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied message id</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when no message id was supplied.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.GetTokenResult(System.String,System.String)">
+            <summary>
+            Verify the supplied token and return the verification object when successfully verified; otherwise return an exception.
+            </summary>
+            <param name="token">The token to be verified.</param>
+            <param name="messageId">The message id of the verification.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied message id</returns>
+            <exception cref="T:TwizoAPI.Entity.VerificationExceptions.EmptyTokenException">Thrown when the supplied token is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.VerificationExceptions.EmptyMessageIdException">Thrown when the message id is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+            <exception cref="T:TwizoAPI.Entity.VerificationExceptions.VerificationException">Thrown when the returned error code is a verification error.</exception>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.VerifyToken(System.String,System.String)">
+            <summary>
+            Verify the supplied token; return <c>true</c> when successful and <c>false</c> when there is an error.
+            </summary>
+            <param name="token">The token to be verified.</param>
+            <param name="messageId">The message id of the verification.</param>
+            <returns><c>true</c> if verification was succesful, otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.CreateBackupCode(System.String)">
+            <summary>
+            Create backup codes for the supplied identifier.
+            </summary>
+            <param name="identifier">The identifier.</param>
+            <returns><see cref="T:TwizoAPI.Entity.BackupCode"/> object with the supplied identifier.</returns>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.GetBackupCode(System.String)">
+            <summary>
+            Get the backup code status for the supplied identifier.
+            </summary>
+            <param name="identifier">The identifier.</param>
+            <returns><see cref="T:TwizoAPI.Entity.BackupCode"/> object with the supplied identifier.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the supplied identifier is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.CreateSms(System.String[],System.String,System.String)">
+            <summary>
+            Create an sms with the supplied body, recipients and sender.
+            </summary>
+            <param name="body">The body of the sms.</param>
+            <param name="recipients">Array with the recipients of the sms.</param>
+            <param name="sender">The sender of the sms.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Sms"/> object with the supplied parameters.</returns>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.GetSms(System.String)">
+            <summary>
+            Get the sms status for the supplied message id.
+            </summary>
+            <param name="messageId">The message id of the sms.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Sms"/> object with the supplied message id.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when no message id was supplied.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.GetSmsResults">
+            <summary>
+            Get the sms polling results; returns results only for messages which have result type polling enabled.
+            </summary>
+            <returns>List of <see cref="T:TwizoAPI.Entity.Sms"/> objects.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.CreateNumberLookup(System.String[])">
+            <summary>
+            Create a number lookup for the supplied numbers.
+            </summary>
+            <param name="numbers">Array with the numbers to be lookup up.</param>
+            <returns><see cref="T:TwizoAPI.Entity.NumberLookup"/> object with the supplied numbers.</returns>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.GetNumberLookup(System.String)">
+            <summary>
+            Get the number lookup status for the supplied message id.
+            </summary>
+            <param name="messageId">The message id of the NumberLookup.</param>
+            <returns><see cref="T:TwizoAPI.Entity.NumberLookup"/> object with the supplied message id.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when no message id was supplied.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.GetNumberLookupResults">
+            <summary>
+            Get the number lookup polling results; returns results only for messages which have result type polling enabled.
+            </summary>
+            <returns>List of <see cref="T:TwizoAPI.Entity.NumberLookup"/> objects.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.CreateWidgetSession(System.String[],System.String,System.String)">
+            <summary>
+            Create a widget session with the supplied allowed types, recipient and backup code identifier.
+            </summary>
+            <param name="allowedTypes">Array with the allowed types.</param>
+            <param name="recipient">The recipient (optional).</param>
+            <param name="backupCodeIdentifier">The backup code identifier (optional).</param>
+            <returns><see cref="T:TwizoAPI.Entity.WidgetSession"/> object with the supplied parameters.</returns>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.GetWidgetSession(System.String,System.String,System.String)">
+            <summary>
+            Get the widget session status for the supplied session token.
+            </summary>
+            <param name="sessionToken">The session token.</param>
+            <param name="recipient">The recipient (optional).</param>
+            <param name="backupCodeIdentifier">The backup code identifier (optional).</param>
+            <returns><see cref="T:TwizoAPI.Entity.WidgetSession"/> with the supplied parameters.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the session token is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the recipient and backup code identifier are empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of this entity could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.ITwizo.CreateBalance">
+            <summary>
+            Create a balance object and retrieve its data.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Entity.Balance"/> object including balance data.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when loading the balance data has failed.</exception>
+        </member>
+        <member name="T:TwizoAPI.Responses.Response">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Response from API server.
+            </summary>
+        </member>
+        <member name="P:TwizoAPI.Responses.Response.body">
+            <summary> Get the response body.</summary>
+        </member>
+        <member name="P:TwizoAPI.Responses.Response.statusCode">
+            <summary>Gets the http status code.</summary>
+        </member>
+        <member name="M:TwizoAPI.Responses.Response.#ctor(System.Collections.Generic.Dictionary{System.String,System.Object},System.Int32)">
+            <summary>
+            Initializes a new instance fo the <see cref="T:TwizoAPI.Responses.Response"/> class.
+            </summary>
+            <param name="body">Deserialized API response.</param>
+            <param name="statusCode">The http status code returned by the server.</param>
+        </member>
+        <member name="T:TwizoAPI.Responses.RestStatusCodes">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Abstract class with all rest status codes.
+            </summary>
+        </member>
+        <member name="T:TwizoAPI.Twizo">
+            This file is part of the Twizo C# API.
+            
+            (c) Twizo - info@twizo.com
+            
+            For the full copyright and license information, please view the LICENSE file that was distributed with this source code.
+            <summary>
+            Main Twizo class, used to create entities.
+            </summary>
+        </member>
+        <member name="M:TwizoAPI.Twizo.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TwizoAPI.Twizo"/> class.
+            </summary>
+            <param name="apiKey">Your Twizo API key.</param>
+            <param name="apiHost">The Twizo host of your choice.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the provided apiKey or apiHost are null.</exception>
+        </member>
+        <member name="M:TwizoAPI.Twizo.CreateVerification(System.String)">
+            <summary>
+            Create an sms verification for the supplied recipient.
+            </summary>
+            <param name="recipient">The number that should receive the token.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied recipient.</returns>
+        </member>
+        <member name="M:TwizoAPI.Twizo.CreateVerificationCall(System.String)">
+            <summary>
+            Create a call verification for the supplied recipient.
+            </summary>
+            <param name="recipient">The number that should receive the token.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied recipient.</returns>
+        </member>
+        <member name="M:TwizoAPI.Twizo.GetVerification(System.String)">
+            <summary>
+            Get the verification status for the supplied message id
+            </summary>
+            <param name="messageId">The message id of the verification.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied message id</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when no message id was supplied.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Twizo.GetTokenResult(System.String,System.String)">
+            <summary>
+            Verify the supplied token and return the verification object when successfully verified; otherwise return an exception.
+            </summary>
+            <param name="token">The token to be verified.</param>
+            <param name="messageId">The message id of the verification.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Verification"/> object with the supplied message id</returns>
+            <exception cref="T:TwizoAPI.Entity.VerificationExceptions.EmptyTokenException">Thrown when the supplied token is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.VerificationExceptions.EmptyMessageIdException">Thrown when the message id is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+            <exception cref="T:TwizoAPI.Entity.VerificationExceptions.VerificationException">Thrown when the returned error code is a verification error.</exception>
+        </member>
+        <member name="M:TwizoAPI.Twizo.VerifyToken(System.String,System.String)">
+            <summary>
+            Verify the supplied token; return <c>true</c> when successful and <c>false</c> when there is an error.
+            </summary>
+            <param name="token">The token to be verified.</param>
+            <param name="messageId">The message id of the verification.</param>
+            <returns><c>true</c> if verification was succesful, otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:TwizoAPI.Twizo.CreateBackupCode(System.String)">
+            <summary>
+            Create backup codes for the supplied identifier.
+            </summary>
+            <param name="identifier">The identifier.</param>
+            <returns><see cref="T:TwizoAPI.Entity.BackupCode"/> object with the supplied identifier.</returns>
+        </member>
+        <member name="M:TwizoAPI.Twizo.GetBackupCode(System.String)">
+            <summary>
+            Get the backup code status for the supplied identifier.
+            </summary>
+            <param name="identifier">The identifier.</param>
+            <returns><see cref="T:TwizoAPI.Entity.BackupCode"/> object with the supplied identifier.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the supplied identifier is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Twizo.CreateSms(System.String,System.String,System.String)">
+            <summary>
+            Create an sms with the supplied body, recipient and sender.
+            </summary>
+            <param name="body">The body of the sms.</param>
+            <param name="recipient">The recipient of the sms.</param>
+            <param name="sender">The sender of the sms.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Sms"/> object with the supplied parameters.</returns>
+        </member>
+        <member name="M:TwizoAPI.Twizo.CreateSms(System.String[],System.String,System.String)">
+            <summary>
+            Create an sms with the supplied body, recipients and sender.
+            </summary>
+            <param name="body">The body of the sms.</param>
+            <param name="recipients">Array with the recipients of the sms.</param>
+            <param name="sender">The sender of the sms.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Sms"/> object with the supplied parameters.</returns>
+        </member>
+        <member name="M:TwizoAPI.Twizo.GetSms(System.String)">
+            <summary>
+            Get the sms status for the supplied message id.
+            </summary>
+            <param name="messageId">The message id of the sms.</param>
+            <returns><see cref="T:TwizoAPI.Entity.Sms"/> object with the supplied message id.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when no message id was supplied.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Twizo.GetSmsResults">
+            <summary>
+            Get the sms polling results; returns results only for messages which have result type polling enabled.
+            </summary>
+            <returns>List of <see cref="T:TwizoAPI.Entity.Sms"/> objects.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Twizo.CreateNumberLookup(System.String)">
+            <summary>
+            Create a number lookup for the supplied number.
+            </summary>
+            <param name="number">The number to be lookup up.</param>
+            <returns><see cref="T:TwizoAPI.Entity.NumberLookup"/> object with the supplied numbers.</returns>
+        </member>
+        <member name="M:TwizoAPI.Twizo.CreateNumberLookup(System.String[])">
+            <summary>
+            Create a number lookup for the supplied numbers.
+            </summary>
+            <param name="numbers">Array with the numbers to be lookup up.</param>
+            <returns><see cref="T:TwizoAPI.Entity.NumberLookup"/> object with the supplied numbers.</returns>
+        </member>
+        <member name="M:TwizoAPI.Twizo.GetNumberLookup(System.String)">
+            <summary>
+            Get the number lookup status for the supplied message id.
+            </summary>
+            <param name="messageId">The message id of the NumberLookup.</param>
+            <returns><see cref="T:TwizoAPI.Entity.NumberLookup"/> object with the supplied message id.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when no message id was supplied.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Twizo.GetNumberLookupResults">
+            <summary>
+            Get the number lookup polling results; returns results only for messages which have result type polling enabled.
+            </summary>
+            <returns>List of <see cref="T:TwizoAPI.Entity.NumberLookup"/> objects.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Twizo.CreateWidgetSession(System.String[],System.String,System.String)">
+            <summary>
+            Create a widget session with the supplied allowed types, recipient and backup code identifier.
+            </summary>
+            <param name="allowedTypes">Array with the allowed types.</param>
+            <param name="recipient">The recipient (optional).</param>
+            <param name="backupCodeIdentifier">The backup code identifier (optional).</param>
+            <returns><see cref="T:TwizoAPI.Entity.WidgetSession"/> object with the supplied parameters.</returns>
+        </member>
+        <member name="M:TwizoAPI.Twizo.GetWidgetSession(System.String,System.String,System.String)">
+            <summary>
+            Get the widget session status for the supplied session token.
+            </summary>
+            <param name="sessionToken">The session token.</param>
+            <param name="recipient">The recipient (optional).</param>
+            <param name="backupCodeIdentifier">The backup code identifier (optional).</param>
+            <returns><see cref="T:TwizoAPI.Entity.WidgetSession"/> with the supplied parameters.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the session token is empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the recipient and backup code identifier are empty or null.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the <see cref="F:TwizoAPI.AbstractEntity.parameters"/> of this entity could not be serialized.</exception>
+            <exception cref="T:TwizoAPI.Entity.ValidationExceptions.ValidationException">Thrown when incorrect parameters were sent to the server.</exception>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when the server returns a non-success http status code or an invalid response.</exception>
+        </member>
+        <member name="M:TwizoAPI.Twizo.CreateBalance">
+            <summary>
+            Create a balance object.
+            </summary>
+            <returns><see cref="T:TwizoAPI.Entity.Balance"/> object including balance data.</returns>
+            <exception cref="T:TwizoAPI.Entity.EntityException">Thrown when loading the balance data has failed.</exception>
+        </member>
+    </members>
+</doc>
