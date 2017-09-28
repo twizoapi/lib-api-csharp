@@ -12,8 +12,8 @@ namespace UnitTests
     [TestClass()]
     public class TwizoTests
     {
-        public static string apiKey = "gXf2-V9QQB6yJTRn4A7wJO6yRxpnDWZ2xzNvHrLocWJsPgtS";
-        public static string apiHost = "api-asia-01.twizo.com";
+        public static string apiKey = "";
+        public static string apiHost = "";
 
         [TestMethod()]
         public void CreateVerificationTest()

@@ -12,9 +12,8 @@ namespace Examples
     public class Menu
     {
         //Set API key and select server
-        private string apiKey = "gXf2-V9QQB6yJTRn4A7wJO6yRxpnDWZ2xzNvHrLocWJsPgtS";
-        private string apiHost = "api-asia-01.twizo.com";
-        //private string apiHost = "api-eu-01.twizo.com";
+        private string apiKey = "";
+        private string apiHost = "";
 
         private Verification verification;
         private SMS sms;
